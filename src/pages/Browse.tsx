@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { getLocationsWithFishFries } from '../lib/db'
 import type { LocationWithFishFry, FishFry } from '../lib/types'
 
@@ -156,11 +157,13 @@ function FishFryCard({ item }: { item: LocationWithFishFry }) {
 // ── page ─────────────────────────────────────────────────────────────────────
 
 export default function Browse() {
+  const [searchParams] = useSearchParams()
+
   const [data, setData]       = useState<LocationWithFishFry[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState<string | null>(null)
 
-  const [search,     setSearch]     = useState('')
+  const [search,     setSearch]     = useState(searchParams.get('q') ?? '')
   const [dateFilter, setDateFilter] = useState('')
   const [dineIn,     setDineIn]     = useState(false)
   const [carryOut,   setCarryOut]   = useState(false)
