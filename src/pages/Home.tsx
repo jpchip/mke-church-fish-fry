@@ -20,16 +20,6 @@ export default function Home() {
         </div>
 
         <div className="col-12 col-sm-6 col-md-4">
-          <Link to="/guide" className="card text-decoration-none text-dark h-100">
-            <div className="card-body">
-              <div className="fs-1">📖</div>
-              <h5 className="card-title mt-2">Guide</h5>
-              <p className="card-text text-muted">Tips, traditions, and everything you need to know about Milwaukee fish fries.</p>
-            </div>
-          </Link>
-        </div>
-
-        <div className="col-12 col-sm-6 col-md-4">
           <Link to="/map" className="card text-decoration-none text-dark h-100">
             <div className="card-body">
               <div className="fs-1">🗺️</div>

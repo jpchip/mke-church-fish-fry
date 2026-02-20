@@ -33,11 +33,6 @@ export default function NavBar() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} to="/guide">
-                Guide
-              </NavLink>
-            </li>
-            <li className="nav-item">
               <NavLink className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} to="/map">
                 Map
               </NavLink>
