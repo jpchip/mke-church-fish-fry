@@ -1,5 +1,4 @@
-/** Geocoded coordinates (lat, lon) keyed by location.id.
- *  IDs 14 and 22 are approximate town-centre fallbacks. */
+/** Geocoded coordinates (lat, lon) keyed by location.id. */
 export const COORDS: Record<number, [number, number]> = {
   1:  [43.10487, -87.89639],  // Holy Family Parish
   2:  [43.01875, -88.05779],  // Mother of Perpetual Help Parish
@@ -14,7 +13,7 @@ export const COORDS: Record<number, [number, number]> = {
   11: [43.23507, -88.16217],  // St. Boniface Parish
   12: [43.08915, -88.13889],  // St. Dominic Parish
   13: [42.98718, -87.98965],  // St. Gregory the Great
-  14: [42.87591, -88.35588],  // St. James the Less (approx — Mukwonago area)
+  14: [42.873973, -88.321548], // St. James the Less
   15: [42.96731, -88.02006],  // St. John the Evangelist
   16: [42.88273, -88.20311],  // St. Joseph Parish Big Bend
   17: [42.69650, -87.81258],  // St. Lucy Parish
@@ -22,7 +21,7 @@ export const COORDS: Record<number, [number, number]> = {
   19: [43.05354, -87.98106],  // St. Sebastian Parish
   20: [42.85719, -87.93554],  // St. Stephen Parish
   21: [42.87994, -88.47559],  // St. Theresa of Avila Church
-  22: [42.80583, -88.20726],  // St. Thomas Aquinas Parish (approx — Waterford area)
+  22: [42.761100, -88.212721], // St. Thomas Aquinas Parish
 }
 
 /** Haversine distance in miles between two lat/lon points. */
