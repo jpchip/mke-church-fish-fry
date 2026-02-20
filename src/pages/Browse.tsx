@@ -240,12 +240,13 @@ export default function Browse() {
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState<string | null>(null)
 
-  const [search,     setSearch]     = useState(searchParams.get('q') ?? '')
-  const [dateFilter, setDateFilter] = useState('')
-  const [dineIn,     setDineIn]     = useState(false)
-  const [carryOut,   setCarryOut]   = useState(false)
-  const [drivethru,  setDrivethru]  = useState(false)
-  const [sortBy,     setSortBy]     = useState<'name' | 'distance'>('name')
+  const [search,            setSearch]            = useState(searchParams.get('q') ?? '')
+  const [dateFilter,        setDateFilter]        = useState('')
+  const [dineIn,            setDineIn]            = useState(false)
+  const [carryOut,          setCarryOut]          = useState(false)
+  const [drivethru,         setDrivethru]         = useState(false)
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
+  const [sortBy,            setSortBy]            = useState<'name' | 'distance'>('name')
   const [userCoords, setUserCoords] = useState<[number, number] | null>(null)
   const [locating,   setLocating]   = useState(false)
 
@@ -259,6 +260,9 @@ export default function Browse() {
   const filtered = useMemo(() => {
     return data.filter(item => {
       const ff = item.fishFry
+
+      // Favorites filter
+      if (showFavoritesOnly && !favorites.has(item.id)) return false
 
       // Date filter
       if (dateFilter) {
@@ -287,7 +291,7 @@ export default function Browse() {
 
       return true
     })
-  }, [data, dateFilter, dineIn, carryOut, drivethru, search])
+  }, [data, dateFilter, dineIn, carryOut, drivethru, search, showFavoritesOnly, favorites])
 
   // Sorted view — distance sort only kicks in once we have user coords
   const sorted = useMemo(() => {
@@ -328,10 +332,11 @@ export default function Browse() {
     setDineIn(false)
     setCarryOut(false)
     setDrivethru(false)
+    setShowFavoritesOnly(false)
     setSortBy('name')
   }
 
-  const hasFilters = search || dateFilter || dineIn || carryOut || drivethru || sortBy === 'distance'
+  const hasFilters = search || dateFilter || dineIn || carryOut || drivethru || showFavoritesOnly || sortBy === 'distance'
 
   if (loading) {
     return (
@@ -438,6 +443,17 @@ export default function Browse() {
                       : '📍 Near me'}
                   </button>
                 </div>
+              </div>
+
+              <div className="ms-auto">
+                <div className="small fw-semibold mb-1">Favorites</div>
+                <button
+                  className={`btn btn-sm d-flex align-items-center gap-1 ${showFavoritesOnly ? 'btn-warning' : 'btn-outline-secondary'}`}
+                  onClick={() => setShowFavoritesOnly(v => !v)}
+                >
+                  <FishIcon filled={showFavoritesOnly} />
+                  {showFavoritesOnly ? `Only favorites (${favorites.size})` : 'All locations'}
+                </button>
               </div>
             </div>
 
