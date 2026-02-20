@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>sql.js test</title>
+</head>
+<body>
+  <h1>sql.js test</h1>
+  <pre id="output">Loading…</pre>
+  <script src="./node_modules/sql.js/dist/sql-wasm.js"></script>
+  <script>
+    const out = document.getElementById('output');
+    function log(msg) {
+      out.textContent += '\n' + msg;
+    }
+
+    (async () => {
+      try {
+        out.textContent = 'Initializing sql.js…';
+        const SQL = await initSqlJs({
+          locateFile: () => './node_modules/sql.js/dist/sql-wasm.wasm'
+        });
+        log('sql.js loaded OK');
+
+        log('Fetching fish_fry.db…');
+        const resp = await fetch('./public/fish_fry.db');
+        log('fetch status: ' + resp.status);
+        const buf = await resp.arrayBuffer();
+        log('db size: ' + buf.byteLength + ' bytes');
+
+        const db = new SQL.Database(new Uint8Array(buf));
+        log('Database opened');
+
+        const res = db.exec('SELECT count(*) AS cnt FROM locations');
+        log('exec result: ' + JSON.stringify(res));
+        log('res[0] type: ' + typeof res[0]);
+        log('res[0] keys: ' + (res[0] ? Object.keys(res[0]).join(', ') : 'N/A'));
+        log('columns: ' + JSON.stringify(res[0]?.columns));
+        log('values: ' + JSON.stringify(res[0]?.values));
+
+        log('\n--- JOIN query ---');
+        const res2 = db.exec(`
+          SELECT l.id, l.name, l.city,
+                 f.id AS ff_id, f.fish_types, f.hours_open, f.hours_close
+          FROM locations l
+          JOIN fish_fries f ON f.location_id = l.id
+          ORDER BY l.name
+          LIMIT 3
+        `);
+        log('res2 length: ' + res2.length);
+        log('res2[0] keys: ' + (res2[0] ? Object.keys(res2[0]).join(', ') : 'N/A'));
+        log('res2[0]: ' + JSON.stringify(res2[0], null, 2));
+
+        log('\nDONE ✓');
+      } catch (e) {
+        log('ERROR: ' + e.message);
+        log(e.stack);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,9 +1,13 @@
-import initSqlJs, { type Database, type QueryExecResult } from 'sql.js'
 import type { Location, FishFry, LocationWithFishFry } from './types'
 
-let _db: Database | null = null
+declare function initSqlJs(config: { locateFile: () => string }): Promise<SqlJsStatic>
+interface SqlJsStatic { Database: new (data: Uint8Array) => SqlJsDatabase }
+interface SqlJsDatabase { exec(sql: string): QueryExecResult[] }
+interface QueryExecResult { columns: string[]; values: unknown[][] }
 
-async function getDb(): Promise<Database> {
+let _db: SqlJsDatabase | null = null
+
+async function getDb(): Promise<SqlJsDatabase> {
   if (_db) return _db
 
   const SQL = await initSqlJs({ locateFile: () => '/sql-wasm.wasm' })
