@@ -10,7 +10,7 @@ export default function Home() {
 
       <div className="row g-3 justify-content-center">
         <div className="col-12 col-sm-6 col-md-4">
-          <Link to="/browse" className="card text-decoration-none text-dark h-100">
+          <Link to="/browse" className="card text-decoration-none text-body h-100">
             <div className="card-body">
               <div className="fs-1">📋</div>
               <h5 className="card-title mt-2">Browse</h5>
@@ -20,7 +20,7 @@ export default function Home() {
         </div>
 
         <div className="col-12 col-sm-6 col-md-4">
-          <Link to="/map" className="card text-decoration-none text-dark h-100">
+          <Link to="/map" className="card text-decoration-none text-body h-100">
             <div className="card-body">
               <div className="fs-1">🗺️</div>
               <h5 className="card-title mt-2">Map</h5>
