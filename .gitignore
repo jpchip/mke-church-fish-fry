@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 Church and nonprofit fish fries in Milwaukee area for Lent 2026_files/*
+Church and nonprofit fish fries in Milwaukee area for Lent 2026.html
+.gitignore
+scrape.py
