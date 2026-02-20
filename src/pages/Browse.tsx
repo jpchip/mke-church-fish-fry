@@ -161,7 +161,7 @@ function FishFryCard({
           <div className="d-flex flex-wrap gap-1 align-items-center">
             <span className="small">🐟</span>
             {fishTypes.map(f => (
-              <span key={f} className="badge bg-light text-dark border" style={{ fontSize: '0.7rem' }}>
+              <span key={f} className="badge bg-secondary-subtle text-secondary-emphasis border" style={{ fontSize: '0.7rem' }}>
                 {f}
               </span>
             ))}
@@ -361,7 +361,7 @@ export default function Browse() {
       </div>
 
       {/* ── filter bar ── */}
-      <div className="card bg-light border-0 mb-3">
+      <div className="card bg-body-secondary border-0 mb-3">
         <div className="card-body pb-2">
           <div className="row g-2 align-items-end">
 

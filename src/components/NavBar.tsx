@@ -1,6 +1,9 @@
 import { NavLink } from 'react-router-dom'
+import { useDarkMode } from '../lib/useDarkMode'
 
 export default function NavBar() {
+  const { isDark, toggle } = useDarkMode()
+
   return (
     <nav className="navbar navbar-expand-sm navbar-dark bg-primary sticky-top">
       <div className="container">
@@ -21,7 +24,7 @@ export default function NavBar() {
         </button>
 
         <div className="collapse navbar-collapse" id="mainNav">
-          <ul className="navbar-nav ms-auto">
+          <ul className="navbar-nav ms-auto align-items-sm-center">
             <li className="nav-item">
               <NavLink className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} to="/" end>
                 Home
@@ -36,6 +39,16 @@ export default function NavBar() {
               <NavLink className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} to="/map">
                 Map
               </NavLink>
+            </li>
+            <li className="nav-item ms-sm-2">
+              <button
+                className="btn btn-sm btn-outline-light"
+                onClick={toggle}
+                aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                title={isDark ? 'Light mode' : 'Dark mode'}
+              >
+                {isDark ? '☀️' : '🌙'}
+              </button>
             </li>
           </ul>
         </div>
