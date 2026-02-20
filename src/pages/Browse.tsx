@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { getLocationsWithFishFries } from '../lib/db'
 import type { LocationWithFishFry, FishFry } from '../lib/types'
+import { COORDS, distanceMi } from '../lib/coords'
 
 const LENTEN_FRIDAYS = [
   { label: 'Feb 20', value: '2026-02-20' },
@@ -47,7 +48,7 @@ function mapsUrl(item: LocationWithFishFry): string {
 
 // ── card ─────────────────────────────────────────────────────────────────────
 
-function FishFryCard({ item }: { item: LocationWithFishFry }) {
+function FishFryCard({ item, distMi }: { item: LocationWithFishFry; distMi?: number }) {
   const [expanded, setExpanded] = useState(false)
   const ff = item.fishFry
 
@@ -55,8 +56,11 @@ function FishFryCard({ item }: { item: LocationWithFishFry }) {
   const sides      = ff.sides?.split(', ').filter(Boolean) ?? []
   const price      = formatPrices(ff)
   const dates      = formatDates(ff)
-  const locationLine = [item.venue_notes, item.city ? `${item.city}, WI` : 'WI']
-    .filter(Boolean).join(' · ')
+  const locationLine = [
+    item.venue_notes,
+    item.city ? `${item.city}, WI` : 'WI',
+    distMi != null ? `${distMi.toFixed(1)} mi` : null,
+  ].filter(Boolean).join(' · ')
 
   return (
     <div className="card h-100 shadow-sm">
@@ -168,6 +172,9 @@ export default function Browse() {
   const [dineIn,     setDineIn]     = useState(false)
   const [carryOut,   setCarryOut]   = useState(false)
   const [drivethru,  setDrivethru]  = useState(false)
+  const [sortBy,     setSortBy]     = useState<'name' | 'distance'>('name')
+  const [userCoords, setUserCoords] = useState<[number, number] | null>(null)
+  const [locating,   setLocating]   = useState(false)
 
   useEffect(() => {
     getLocationsWithFishFries()
@@ -209,15 +216,49 @@ export default function Browse() {
     })
   }, [data, dateFilter, dineIn, carryOut, drivethru, search])
 
+  // Sorted view — distance sort only kicks in once we have user coords
+  const sorted = useMemo(() => {
+    if (sortBy === 'name' || !userCoords) return filtered
+    const [uLat, uLon] = userCoords
+    return [...filtered].sort((a, b) => {
+      const ca = COORDS[a.id]
+      const cb = COORDS[b.id]
+      if (!ca && !cb) return 0
+      if (!ca) return 1
+      if (!cb) return -1
+      return distanceMi(uLat, uLon, ca[0], ca[1]) - distanceMi(uLat, uLon, cb[0], cb[1])
+    })
+  }, [filtered, sortBy, userCoords])
+
+  const handleSortByDistance = () => {
+    if (userCoords) {
+      setSortBy('distance')
+      return
+    }
+    setLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setUserCoords([coords.latitude, coords.longitude])
+        setSortBy('distance')
+        setLocating(false)
+      },
+      () => {
+        setLocating(false)
+        alert('Unable to retrieve your location.')
+      },
+    )
+  }
+
   const clearFilters = () => {
     setSearch('')
     setDateFilter('')
     setDineIn(false)
     setCarryOut(false)
     setDrivethru(false)
+    setSortBy('name')
   }
 
-  const hasFilters = search || dateFilter || dineIn || carryOut || drivethru
+  const hasFilters = search || dateFilter || dineIn || carryOut || drivethru || sortBy === 'distance'
 
   if (loading) {
     return (
@@ -238,7 +279,7 @@ export default function Browse() {
     <div>
       <div className="d-flex align-items-baseline justify-content-between mb-3">
         <h2 className="mb-0">Browse Fish Fries</h2>
-        <span className="text-muted small">{filtered.length} / {data.length}</span>
+        <span className="text-muted small">{sorted.length} / {data.length}</span>
       </div>
 
       {/* ── filter bar ── */}
@@ -282,25 +323,48 @@ export default function Browse() {
               )}
             </div>
 
-            {/* Service toggles */}
-            <div className="col-12">
-              <div className="small fw-semibold mb-1">Service type</div>
-              <div className="d-flex gap-2 flex-wrap">
-                {(
-                  [
-                    { label: 'Dine-in',      state: dineIn,    set: setDineIn },
-                    { label: 'Carry-out',    state: carryOut,  set: setCarryOut },
-                    { label: 'Drive-through', state: drivethru, set: setDrivethru },
-                  ] as const
-                ).map(({ label, state, set }) => (
+            {/* Service toggles + Sort — same row on mobile */}
+            <div className="col-12 d-flex flex-wrap gap-3">
+              <div>
+                <div className="small fw-semibold mb-1">Service type</div>
+                <div className="d-flex gap-2 flex-wrap">
+                  {(
+                    [
+                      { label: 'Dine-in',       state: dineIn,    set: setDineIn },
+                      { label: 'Carry-out',     state: carryOut,  set: setCarryOut },
+                      { label: 'Drive-through', state: drivethru, set: setDrivethru },
+                    ] as const
+                  ).map(({ label, state, set }) => (
+                    <button
+                      key={label}
+                      className={`btn btn-sm ${state ? 'btn-primary' : 'btn-outline-secondary'}`}
+                      onClick={() => set(v => !v)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="small fw-semibold mb-1">Sort</div>
+                <div className="d-flex gap-2">
                   <button
-                    key={label}
-                    className={`btn btn-sm ${state ? 'btn-primary' : 'btn-outline-secondary'}`}
-                    onClick={() => set(v => !v)}
+                    className={`btn btn-sm ${sortBy === 'name' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                    onClick={() => setSortBy('name')}
                   >
-                    {label}
+                    Name
                   </button>
-                ))}
+                  <button
+                    className={`btn btn-sm ${sortBy === 'distance' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                    onClick={handleSortByDistance}
+                    disabled={locating}
+                  >
+                    {locating
+                      ? <><span className="spinner-border spinner-border-sm me-1" />Locating…</>
+                      : '📍 Near me'}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -309,18 +373,22 @@ export default function Browse() {
       </div>
 
       {/* ── results ── */}
-      {filtered.length === 0 ? (
+      {sorted.length === 0 ? (
         <div className="alert alert-info">
           No fish fries match your filters.{' '}
           <button className="btn btn-link p-0 alert-link" onClick={clearFilters}>Clear filters</button>
         </div>
       ) : (
         <div className="row g-3">
-          {filtered.map(item => (
-            <div key={item.fishFry.id} className="col-12 col-md-6 col-xl-4">
-              <FishFryCard item={item} />
-            </div>
-          ))}
+          {sorted.map(item => {
+            const coords = userCoords && sortBy === 'distance' ? COORDS[item.id] : undefined
+            const dist = coords ? distanceMi(userCoords![0], userCoords![1], coords[0], coords[1]) : undefined
+            return (
+              <div key={item.fishFry.id} className="col-12 col-md-6 col-xl-4">
+                <FishFryCard item={item} distMi={dist} />
+              </div>
+            )
+          })}
         </div>
       )}
     </div>
