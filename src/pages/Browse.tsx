@@ -105,7 +105,7 @@ function FishFryCard({ item }: { item: LocationWithFishFry }) {
         )}
 
         {/* Drinks + dessert */}
-        {(ff.drinks_included || ff.drinks_purchase || ff.dessert_included) && (
+        {(!!ff.drinks_included || !!ff.drinks_purchase || !!ff.dessert_included) && (
           <div className="text-muted" style={{ fontSize: '0.78rem' }}>
             {ff.drinks_included  && <span className="me-2">🥤 {ff.drinks_included} incl.</span>}
             {ff.drinks_purchase  && <span className="me-2">🍺 {ff.drinks_purchase} for purchase</span>}
@@ -201,7 +201,7 @@ export default function Browse() {
       // Text search across name, city, and fish types
       if (search.trim()) {
         const q = search.toLowerCase()
-        const hay = `${item.name} ${item.city ?? ''} ${ff.fish_types ?? ''}`.toLowerCase()
+        const hay = `${item.name} ${item.city ?? ''} ${ff.fish_types ?? ''} ${ff.sides ?? ''}`.toLowerCase()
         if (!hay.includes(q)) return false
       }
 
@@ -252,7 +252,7 @@ export default function Browse() {
               <input
                 type="search"
                 className="form-control form-control-sm"
-                placeholder="Name, city, fish type…"
+                placeholder="Name, city, fish type, side…"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
