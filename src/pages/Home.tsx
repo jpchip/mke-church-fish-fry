@@ -43,6 +43,17 @@ export default function Home() {
       <p className="text-muted mt-5 small">
         Lenten Fridays 2026: Feb 20 &amp; 27, Mar 6, 13, 20, 27, Apr 3
       </p>
+      <p className="text-muted small">
+        Data sourced from{' '}
+        <a
+          href="https://www.jsonline.com/story/entertainment/dining/2026/02/18/church-and-nonprofit-fish-fries-in-milwaukee-area-for-lent-2026/88394289007/"
+          target="_blank"
+          rel="noreferrer"
+          className="text-muted"
+        >
+          Milwaukee Journal Sentinel
+        </a>
+      </p>
     </div>
   )
 }
