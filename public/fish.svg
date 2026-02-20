@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 20">
+  <!-- tail fin -->
+  <path d="M 8 10 L 2 4 L 4 10 L 2 16 Z" fill="#f59e0b" stroke="#b45309" stroke-width="1.4" stroke-linejoin="round"/>
+  <!-- body -->
+  <path d="M 8 10 C 8 4 14 2 20 2 C 28 2 31 6 31 10 C 31 14 28 18 20 18 C 14 18 8 16 8 10 Z" fill="#f59e0b" stroke="#b45309" stroke-width="1.4"/>
+  <!-- eye highlight -->
+  <circle cx="25" cy="8.5" r="1.6" fill="rgba(255,255,255,0.7)"/>
+  <!-- pupil -->
+  <circle cx="25" cy="8.5" r="0.85" fill="#78350f"/>
+</svg>

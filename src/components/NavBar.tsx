@@ -8,7 +8,7 @@ export default function NavBar() {
     <nav className="navbar navbar-expand-sm navbar-dark bg-primary sticky-top">
       <div className="container">
         <NavLink className="navbar-brand fw-bold" to="/">
-          🐟 MKE Fish Fries
+          🐟 MKE Church Fish Fries
         </NavLink>
 
         <button
