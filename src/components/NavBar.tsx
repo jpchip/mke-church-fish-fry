@@ -8,7 +8,7 @@ export default function NavBar() {
     <nav className="navbar navbar-expand-sm navbar-dark bg-primary sticky-top">
       <div className="container">
         <NavLink className="navbar-brand fw-bold" to="/">
-          🐟 MKE Church Fish Fries
+          <span style={{ fontSize: '1.5em' }}>🐟</span> MKE Church Fish Fries
         </NavLink>
 
         <button
@@ -24,23 +24,25 @@ export default function NavBar() {
         </button>
 
         <div className="collapse navbar-collapse" id="mainNav">
-          <ul className="navbar-nav ms-auto align-items-sm-center">
-            <li className="nav-item">
-              <NavLink className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} to="/" end>
-                Home
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} to="/browse">
-                Browse
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} to="/map">
-                Map
-              </NavLink>
-            </li>
-            <li className="nav-item ms-sm-2">
+          <div className="d-flex flex-row align-items-start align-items-sm-center ms-auto">
+            <ul className="navbar-nav align-items-sm-center">
+              <li className="nav-item">
+                <NavLink className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} to="/" end>
+                  Home
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} to="/browse">
+                  Browse
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} to="/map">
+                  Map
+                </NavLink>
+              </li>
+            </ul>
+            <div className="ms-auto ms-sm-3 mt-1 mt-sm-0">
               <button
                 className="btn btn-sm btn-outline-light"
                 onClick={toggle}
@@ -49,8 +51,8 @@ export default function NavBar() {
               >
                 {isDark ? '☀️' : '🌙'}
               </button>
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
       </div>
     </nav>
