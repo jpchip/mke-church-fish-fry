@@ -15,6 +15,27 @@ L.Icon.Default.mergeOptions({ iconUrl: markerIcon, iconRetinaUrl: markerIcon2x, 
 import { getLocationsWithFishFries } from '../lib/db'
 import type { Location, FishFry, LocationWithFishFry } from '../lib/types'
 import { COORDS } from '../lib/coords'
+import { useFavorites } from '../lib/useFavorites'
+
+// ── custom map markers ────────────────────────────────────────────────────────
+
+function makePinIcon(color: string, outline: string) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 41" width="25" height="41">
+    <path d="M12.5 0C5.597 0 0 5.597 0 12.5c0 9.374 12.5 28.5 12.5 28.5S25 21.874 25 12.5C25 5.597 19.403 0 12.5 0z"
+      fill="${color}" stroke="${outline}" stroke-width="1.5"/>
+    <circle cx="12.5" cy="12.5" r="5" fill="white" opacity="0.85"/>
+  </svg>`
+  return L.divIcon({
+    html: svg,
+    className: '',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  })
+}
+
+const defaultPinIcon  = makePinIcon('#3b82f6', '#1d4ed8')
+const favoritePinIcon = makePinIcon('#f59e0b', '#b45309')
 
 const MKE_CENTER: [number, number] = [43.02, -88.05]
 
@@ -85,6 +106,7 @@ export default function MapPage() {
   const [loading, setLoading]     = useState(true)
   const [error, setError]         = useState<string | null>(null)
   const [leafletMap, setLeafletMap] = useState<L.Map | null>(null)
+  const { favorites } = useFavorites()
 
   useEffect(() => {
     getLocationsWithFishFries()
@@ -135,7 +157,18 @@ export default function MapPage() {
         <h2 className="mb-0">Fish Fry Map</h2>
         <span className="text-muted small">{grouped.length} locations</span>
       </div>
-      <p className="text-muted small mb-2">Tap a pin for details. Lenten Fridays 2026.</p>
+      <div className="d-flex align-items-center gap-3 mb-2">
+        <p className="text-muted small mb-0">Tap a pin for details. Lenten Fridays 2026.</p>
+        {favorites.size > 0 && (
+          <span className="d-flex align-items-center gap-1 small">
+            <span style={{
+              display: 'inline-block', width: 12, height: 12, borderRadius: '50%',
+              background: '#f59e0b', border: '1.5px solid #b45309', flexShrink: 0,
+            }} />
+            <span className="text-muted">{favorites.size} favorited</span>
+          </span>
+        )}
+      </div>
 
       {/* wrapper gives us a positioning context for the overlay button */}
       <div style={{ position: 'relative' }}>
@@ -153,8 +186,14 @@ export default function MapPage() {
           {grouped.map(({ location, fishFries }) => {
             const coords = COORDS[location.id]
             if (!coords) return null
+            const isFav = favorites.has(location.id)
             return (
-              <Marker key={location.id} position={coords}>
+              <Marker
+                key={location.id}
+                position={coords}
+                icon={isFav ? favoritePinIcon : defaultPinIcon}
+                zIndexOffset={isFav ? 1000 : 0}
+              >
                 <Popup>
                   <LocationPopup loc={location} fishFries={fishFries} />
                 </Popup>

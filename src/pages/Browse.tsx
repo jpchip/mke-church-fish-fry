@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { getLocationsWithFishFries } from '../lib/db'
 import type { LocationWithFishFry, FishFry } from '../lib/types'
 import { COORDS, distanceMi } from '../lib/coords'
+import { useFavorites } from '../lib/useFavorites'
 
 const LENTEN_FRIDAYS = [
   { label: 'Feb 20', value: '2026-02-20' },
@@ -46,9 +47,56 @@ function mapsUrl(item: LocationWithFishFry): string {
   return `https://maps.google.com/?q=${encodeURIComponent(q)}`
 }
 
+// ── fish icon ────────────────────────────────────────────────────────────────
+
+function FishIcon({ filled }: { filled: boolean }) {
+  const fill   = filled ? '#f59e0b' : 'none'
+  const stroke = filled ? '#b45309' : '#9ca3af'
+  const eyeFill = filled ? '#78350f' : '#9ca3af'
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 20"
+      width="22"
+      height="22"
+      style={{ display: 'block', transition: 'all 0.18s ease' }}
+      aria-hidden="true"
+    >
+      {/* tail fin */}
+      <path
+        d="M 8 10 L 2 4 L 4 10 L 2 16 Z"
+        fill={fill}
+        stroke={stroke}
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+      {/* body */}
+      <path
+        d="M 8 10 C 8 4 14 2 20 2 C 28 2 31 6 31 10 C 31 14 28 18 20 18 C 14 18 8 16 8 10 Z"
+        fill={fill}
+        stroke={stroke}
+        strokeWidth="1.4"
+      />
+      {/* eye */}
+      <circle cx="25" cy="8.5" r="1.6" fill={filled ? 'rgba(255,255,255,0.7)' : 'none'} />
+      <circle cx="25" cy="8.5" r="0.85" fill={eyeFill} />
+    </svg>
+  )
+}
+
 // ── card ─────────────────────────────────────────────────────────────────────
 
-function FishFryCard({ item, distMi }: { item: LocationWithFishFry; distMi?: number }) {
+function FishFryCard({
+  item,
+  distMi,
+  isFavorite,
+  onToggleFavorite,
+}: {
+  item: LocationWithFishFry
+  distMi?: number
+  isFavorite: boolean
+  onToggleFavorite: (id: number) => void
+}) {
   const [expanded, setExpanded] = useState(false)
   const ff = item.fishFry
 
@@ -63,11 +111,35 @@ function FishFryCard({ item, distMi }: { item: LocationWithFishFry; distMi?: num
   ].filter(Boolean).join(' · ')
 
   return (
-    <div className="card h-100 shadow-sm">
+    <div className="card h-100 shadow-sm" style={{ position: 'relative' }}>
+      {/* Favorite fish button */}
+      <button
+        onClick={() => onToggleFavorite(item.id)}
+        title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+        aria-label={isFavorite ? `Remove ${item.name} from favorites` : `Favorite ${item.name}`}
+        style={{
+          position: 'absolute',
+          top: 8,
+          right: 8,
+          background: 'none',
+          border: 'none',
+          padding: 2,
+          cursor: 'pointer',
+          zIndex: 1,
+          lineHeight: 0,
+          opacity: isFavorite ? 1 : 0.45,
+          transition: 'opacity 0.18s ease',
+        }}
+        onMouseEnter={e => { if (!isFavorite) (e.currentTarget as HTMLButtonElement).style.opacity = '0.85' }}
+        onMouseLeave={e => { if (!isFavorite) (e.currentTarget as HTMLButtonElement).style.opacity = '0.45' }}
+      >
+        <FishIcon filled={isFavorite} />
+      </button>
+
       <div className="card-body d-flex flex-column gap-2">
 
         {/* Name + location */}
-        <div>
+        <div style={{ paddingRight: 28 }}>
           <h6 className="mb-0 fw-bold">{item.name}</h6>
           <div className="text-muted" style={{ fontSize: '0.8rem' }}>{locationLine}</div>
         </div>
@@ -162,6 +234,7 @@ function FishFryCard({ item, distMi }: { item: LocationWithFishFry; distMi?: num
 
 export default function Browse() {
   const [searchParams] = useSearchParams()
+  const { favorites, toggle: toggleFavorite } = useFavorites()
 
   const [data, setData]       = useState<LocationWithFishFry[]>([])
   const [loading, setLoading] = useState(true)
@@ -385,7 +458,12 @@ export default function Browse() {
             const dist = coords ? distanceMi(userCoords![0], userCoords![1], coords[0], coords[1]) : undefined
             return (
               <div key={item.fishFry.id} className="col-12 col-md-6 col-xl-4">
-                <FishFryCard item={item} distMi={dist} />
+                <FishFryCard
+                  item={item}
+                  distMi={dist}
+                  isFavorite={favorites.has(item.id)}
+                  onToggleFavorite={toggleFavorite}
+                />
               </div>
             )
           })}
