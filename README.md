@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/8352ecc1-e738-4904-a65e-6f900d759a90/deploy-status)](https://app.netlify.com/projects/mke-church-fish-fries/deploys)
+
 # MKE Church Fish Fries
 
 A web app to find Lenten fish fry events in the Milwaukee area for 2026. Browse locations, filter by date and service type, and view them on an interactive map. Data sourced from the Milwaukee Journal Sentinel.
@@ -58,14 +60,14 @@ The app loads a SQLite database (`fish_fry.db`) client-side using sql.js — no 
 
 ### Prerequisites
 
-- Node.js (v18+)
+- Node.js (v24+)
 - The `fish_fry.db` SQLite database file placed in the `public/` directory
 
 ### Install and Run
 
 ```bash
 npm install
-npm run dev
+npm start
 ```
 
 The dev server starts at `http://localhost:5173`.
@@ -77,6 +79,9 @@ npm run build    # Production build (outputs to dist/)
 npm run preview  # Preview production build locally
 npm run lint     # Run ESLint
 ```
+### Public Site Stats
+
+https://cloud.umami.is/analytics/eu/share/uPDhbVoGsWIepZCk
 
 ## Data Source
 
