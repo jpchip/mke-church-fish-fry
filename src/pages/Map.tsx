@@ -17,6 +17,29 @@ import type { Location, FishFry, LocationWithFishFry } from '../lib/types'
 import { COORDS } from '../lib/coords'
 import { useFavorites } from '../lib/useFavorites'
 
+// ── fish icon (matches Browse page) ──────────────────────────────────────────
+
+function FishIcon({ filled }: { filled: boolean }) {
+  const fill    = filled ? '#f59e0b' : 'none'
+  const stroke  = filled ? '#b45309' : '#9ca3af'
+  const eyeFill = filled ? '#78350f' : '#9ca3af'
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 20"
+      width="20"
+      height="20"
+      style={{ display: 'block', transition: 'all 0.18s ease' }}
+      aria-hidden="true"
+    >
+      <path d="M 8 10 L 2 4 L 4 10 L 2 16 Z" fill={fill} stroke={stroke} strokeWidth="1.4" strokeLinejoin="round" />
+      <path d="M 8 10 C 8 4 14 2 20 2 C 28 2 31 6 31 10 C 31 14 28 18 20 18 C 14 18 8 16 8 10 Z" fill={fill} stroke={stroke} strokeWidth="1.4" />
+      <circle cx="25" cy="8.5" r="1.6" fill={filled ? 'rgba(255,255,255,0.7)' : 'none'} />
+      <circle cx="25" cy="8.5" r="0.85" fill={eyeFill} />
+    </svg>
+  )
+}
+
 // ── custom map markers ────────────────────────────────────────────────────────
 
 function makePinIcon(color: string, outline: string) {
@@ -59,13 +82,32 @@ function formatDates(ff: FishFry): string {
 
 // ── popup ─────────────────────────────────────────────────────────────────────
 
-function LocationPopup({ loc, fishFries }: { loc: Location; fishFries: FishFry[] }) {
+function LocationPopup({
+  loc, fishFries, isFavorite, onToggleFavorite,
+}: {
+  loc: Location
+  fishFries: FishFry[]
+  isFavorite: boolean
+  onToggleFavorite: () => void
+}) {
   const primary = fishFries[0]
   const browseLink = `/browse?q=${encodeURIComponent(loc.name)}`
 
   return (
     <div style={{ minWidth: 200, maxWidth: 260 }}>
-      <div className="fw-bold" style={{ fontSize: '0.92rem' }}>{loc.name}</div>
+      <div className="d-flex align-items-start justify-content-between gap-2">
+        <div className="fw-bold" style={{ fontSize: '0.92rem' }}>{loc.name}</div>
+        <button
+          onClick={onToggleFavorite}
+          title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          style={{
+            background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexShrink: 0,
+            opacity: isFavorite ? 1 : 0.45, lineHeight: 1,
+          }}
+        >
+          <FishIcon filled={isFavorite} />
+        </button>
+      </div>
       {loc.venue_notes && (
         <div className="text-muted" style={{ fontSize: '0.76rem' }}>{loc.venue_notes}</div>
       )}
@@ -106,7 +148,7 @@ export default function MapPage() {
   const [loading, setLoading]     = useState(true)
   const [error, setError]         = useState<string | null>(null)
   const [leafletMap, setLeafletMap] = useState<L.Map | null>(null)
-  const { favorites } = useFavorites()
+  const { favorites, toggle } = useFavorites()
 
   useEffect(() => {
     getLocationsWithFishFries()
@@ -195,7 +237,12 @@ export default function MapPage() {
                 zIndexOffset={isFav ? 1000 : 0}
               >
                 <Popup>
-                  <LocationPopup loc={location} fishFries={fishFries} />
+                  <LocationPopup
+                    loc={location}
+                    fishFries={fishFries}
+                    isFavorite={isFav}
+                    onToggleFavorite={() => toggle(location.id)}
+                  />
                 </Popup>
               </Marker>
             )
