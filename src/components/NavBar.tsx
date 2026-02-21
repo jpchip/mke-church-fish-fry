@@ -8,7 +8,7 @@ export default function NavBar() {
     <nav className="navbar navbar-expand-sm navbar-dark bg-primary sticky-top">
       <div className="container">
         <NavLink className="navbar-brand fw-bold" to="/">
-          <span style={{ fontSize: '1.5em' }}>🐟</span> MKE Church Fish Fries
+          <span style={{ fontSize: '1.5em' }}>🐟</span> Fish Frynder
         </NavLink>
 
         <button
