@@ -54,6 +54,15 @@ export default function Home() {
         >
           Milwaukee Journal Sentinel
         </a>
+        {' '}and{' '}
+        <a
+          href="https://catholicherald.org/local/2026-lenten-fish-fry-listing/"
+          target="_blank"
+          rel="noreferrer"
+          className="text-muted"
+        >
+          Catholic Herald
+        </a>
       </p>
 
       <p className="text-muted small mt-3">

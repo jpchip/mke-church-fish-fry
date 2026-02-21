@@ -22,6 +22,21 @@ export const COORDS: Record<number, [number, number]> = {
   20: [42.85719, -87.93554],  // St. Stephen Parish
   21: [42.87994, -88.47559],  // St. Theresa of Avila Church
   22: [42.761100, -88.212721], // St. Thomas Aquinas Parish
+  23: [43.4441217, -88.6461869], // Sacred Heart Parish (Horicon)
+25: [43.6334558, -88.7384227], // St. Joseph Parish (Waupun)
+27: [42.5918250, -87.8207696], // Downtown Kenosha Catholic Parishes
+  28: [43.0400561, -88.0135293], // St. Jude the Apostle Parish (Wauwatosa)
+  29: [42.8745403, -87.8619081], // St. Matthew Parish (Oak Creek)
+31: [43.4700365, -87.9491688], // Divine Savior Catholic School (Fredonia)
+  32: [43.3202218, -87.9462111], // St. Joseph Parish (Grafton)
+  33: [42.7386593, -87.8095322], // Sacred Heart Parish (Racine)
+35: [43.7479454, -87.9848905], // St. John the Baptist Parish (Plymouth)
+  36: [43.4251692, -88.1863684], // Holy Angels Parish (West Bend)
+  37: [43.3691486, -88.3326025], // St. Lawrence Parish (Hartford)
+  38: [43.4411246, -88.1837457], // St. Mary Immaculate Conception (West Bend)
+40: [42.9800305, -88.2694118], // Corpus Christi — St. John Neumann (Waukesha)
+  41: [42.9996803, -88.2211706], // Corpus Christi — St. Mary (Waukesha)
+43: [43.0180015, -88.1379937], // St. Luke Parish (Brookfield)
 }
 
 /** Haversine distance in miles between two lat/lon points. */

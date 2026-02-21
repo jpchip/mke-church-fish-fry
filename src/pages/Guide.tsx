@@ -1,5 +1,10 @@
 const LINKS = [
   {
+    url: 'https://www.jsonline.com/story/entertainment/dining/2026/02/18/church-and-nonprofit-fish-fries-in-milwaukee-area-for-lent-2026/88394289007/',
+    name: 'Milwaukee Journal Sentinel — 2026 Fish Fry List',
+    description: 'The Journal Sentinel\'s listing of church and nonprofit fish fries in the Milwaukee area for Lent 2026.',
+  },
+  {
     url: 'https://milwaukeerecord.com/food-drink/its-official-again-today-is-friday-fish-fry-day-throughout-wisconsin/',
     name: 'Milwaukee Record',
     description: "A deep dive into Wisconsin's beloved Friday fish fry tradition and why it's such an enduring part of local culture.",
