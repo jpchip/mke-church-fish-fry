@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import FeedbackModal from '../components/FeedbackModal'
 
 export default function Home() {
   return (
@@ -75,19 +74,6 @@ export default function Home() {
         </a>
       </p>
 
-      <p className="text-muted small mt-3">
-        Know a missing location or spot a mistake?{' '}
-        <button
-          type="button"
-          className="btn btn-link btn-sm p-0 text-muted"
-          data-bs-toggle="modal"
-          data-bs-target="#feedbackModal"
-        >
-          Submit feedback
-        </button>
-      </p>
-
-      <FeedbackModal modalId="feedbackModal" />
     </div>
   )
 }
