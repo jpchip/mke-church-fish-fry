@@ -10,7 +10,7 @@ export default function Home() {
       </p>
 
       <div className="row g-3 justify-content-center">
-        <div className="col-12 col-sm-6 col-md-4">
+        <div className="col-12 col-sm-6 col-lg-3">
           <Link to="/browse" className="card text-decoration-none text-body h-100">
             <div className="card-body">
               <div className="fs-1">📋</div>
@@ -20,7 +20,7 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="col-12 col-sm-6 col-md-4">
+        <div className="col-12 col-sm-6 col-lg-3">
           <Link to="/map" className="card text-decoration-none text-body h-100">
             <div className="card-body">
               <div className="fs-1">🗺️</div>
@@ -30,12 +30,22 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="col-12 col-sm-6 col-md-4">
+        <div className="col-12 col-sm-6 col-lg-3">
           <Link to="/guide" className="card text-decoration-none text-body h-100">
             <div className="card-body">
               <div className="fs-1">📖</div>
               <h5 className="card-title mt-2">Guide</h5>
               <p className="card-text text-muted">Tips, traditions, and links to other great Milwaukee fish fry resources.</p>
+            </div>
+          </Link>
+        </div>
+
+        <div className="col-12 col-sm-6 col-lg-3">
+          <Link to="/plan" className="card text-decoration-none text-body h-100">
+            <div className="card-body">
+              <div className="fs-1">📅</div>
+              <h5 className="card-title mt-2">Plan</h5>
+              <p className="card-text text-muted">Build your personal fish fry itinerary — one Friday at a time.</p>
             </div>
           </Link>
         </div>

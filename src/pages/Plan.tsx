@@ -203,10 +203,10 @@ export default function PlanPage() {
           {planCount > 0 && (
             <>
               <button className="btn btn-sm btn-outline-primary" onClick={handleShare}>
-                Share
+                🔗 Share
               </button>
               <button className="btn btn-sm btn-outline-secondary" onClick={() => window.print()}>
-                Print
+                🖨️ Print
               </button>
             </>
           )}
@@ -215,7 +215,7 @@ export default function PlanPage() {
               className="btn btn-sm btn-link text-danger p-0"
               onClick={clearPlan}
             >
-              Clear plan
+              Clear
             </button>
           )}
         </div>
@@ -251,14 +251,16 @@ export default function PlanPage() {
                 )}
               </span>
               <div className="d-flex gap-1 no-print">
-                <button
-                  className="btn btn-sm btn-outline-primary"
-                  data-bs-toggle="modal"
-                  data-bs-target="#addFishFryModal"
-                  onClick={() => setActiveDate(f.value)}
-                >
-                  {item ? 'Change' : 'Add'}
-                </button>
+                {!item && (
+                  <button
+                    className="btn btn-sm btn-outline-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addFishFryModal"
+                    onClick={() => setActiveDate(f.value)}
+                  >
+                    ➕ Add
+                  </button>
+                )}
                 {item && (
                   <button
                     className="btn btn-sm btn-outline-danger"
