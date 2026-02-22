@@ -46,6 +46,11 @@ export default function NavBar() {
                   Map
                 </NavLink>
               </li>
+              <li className="nav-item">
+                <NavLink className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')} to="/plan">
+                  Plan
+                </NavLink>
+              </li>
             </ul>
             <div className="ms-auto ms-sm-3 mt-1 mt-sm-0">
               <button
