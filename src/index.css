@@ -2,3 +2,14 @@
 body {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* Leaflet popups: match dark mode since Leaflet ignores Bootstrap's theme */
+[data-bs-theme="dark"] .leaflet-popup-content-wrapper,
+[data-bs-theme="dark"] .leaflet-popup-tip {
+  background-color: #2b2b2b;
+  color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .leaflet-popup-content-wrapper .text-muted {
+  color: #adb5bd !important;
+}

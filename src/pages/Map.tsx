@@ -64,6 +64,15 @@ const MKE_CENTER: [number, number] = [43.02, -88.05]
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
+function fishFryOnDate(ff: FishFry, date: string): boolean {
+  if (ff.is_recurring) {
+    return !!ff.start_date && !!ff.end_date &&
+      date >= ff.start_date && date <= ff.end_date
+  }
+  const dates: string[] = JSON.parse(ff.specific_dates ?? '[]')
+  return dates.includes(date)
+}
+
 function shortDate(iso: string): string {
   const [, m, d] = iso.split('-')
   const months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -148,6 +157,7 @@ export default function MapPage() {
   const [loading, setLoading]     = useState(true)
   const [error, setError]         = useState<string | null>(null)
   const [leafletMap, setLeafletMap] = useState<L.Map | null>(null)
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const { favorites, toggle } = useFavorites()
 
   useEffect(() => {
@@ -169,6 +179,35 @@ export default function MapPage() {
     }
     return Array.from(map.values())
   }, [data])
+
+  // All unique dates across every fish fry, sorted
+  const allDates = useMemo(() => {
+    const dateSet = new Set<string>()
+    for (const { fishFries } of grouped) {
+      for (const ff of fishFries) {
+        if (ff.is_recurring && ff.start_date && ff.end_date) {
+          const end = new Date(ff.end_date + 'T12:00:00')
+          const d   = new Date(ff.start_date + 'T12:00:00')
+          while (d.getDay() !== 5) d.setDate(d.getDate() + 1) // advance to first Friday
+          while (d <= end) {
+            dateSet.add(d.toISOString().split('T')[0])
+            d.setDate(d.getDate() + 7)
+          }
+        } else {
+          const dates: string[] = JSON.parse(ff.specific_dates ?? '[]')
+          for (const date of dates) dateSet.add(date)
+        }
+      }
+    }
+    return Array.from(dateSet).sort()
+  }, [grouped])
+
+  const filteredGrouped = useMemo(() => {
+    if (!selectedDate) return grouped
+    return grouped.filter(({ fishFries }) =>
+      fishFries.some(ff => fishFryOnDate(ff, selectedDate))
+    )
+  }, [grouped, selectedDate])
 
   const handleLocate = () => {
     if (!leafletMap) return
@@ -197,19 +236,31 @@ export default function MapPage() {
     <div>
       <div className="d-flex align-items-center justify-content-between mb-1">
         <h2 className="mb-0">Fish Fry Map</h2>
-        <span className="text-muted small">{grouped.length} locations</span>
+        <span className="text-muted small">{filteredGrouped.length} locations</span>
       </div>
-      <div className="d-flex align-items-center gap-3 mb-2">
-        <p className="text-muted small mb-0">Tap a pin for details. Lenten Fridays 2026.</p>
-        {favorites.size > 0 && (
-          <span className="d-flex align-items-center gap-1 small">
-            <span style={{
-              display: 'inline-block', width: 12, height: 12, borderRadius: '50%',
-              background: '#f59e0b', border: '1.5px solid #b45309', flexShrink: 0,
-            }} />
-            <span className="text-muted">{favorites.size} favorited</span>
-          </span>
-        )}
+      <div className="d-flex align-items-center justify-content-between gap-3 mb-2">
+        <div className="d-flex align-items-center gap-3">
+          <p className="text-muted small mb-0">Tap a pin for details. Lenten Fridays 2026.</p>
+          {favorites.size > 0 && (
+            <span className="d-flex align-items-center gap-1 small">
+              <span style={{
+                display: 'inline-block', width: 12, height: 12, borderRadius: '50%',
+                background: '#f59e0b', border: '1.5px solid #b45309', flexShrink: 0,
+              }} />
+              <span className="text-muted">{favorites.size} favorited</span>
+            </span>
+          )}
+        </div>
+        <select
+          className="form-select form-select-sm w-auto"
+          value={selectedDate ?? ''}
+          onChange={e => setSelectedDate(e.target.value || null)}
+        >
+          <option value="">All dates</option>
+          {allDates.map(date => (
+            <option key={date} value={date}>{shortDate(date)}</option>
+          ))}
+        </select>
       </div>
 
       {/* wrapper gives us a positioning context for the overlay button */}
@@ -225,7 +276,7 @@ export default function MapPage() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {grouped.map(({ location, fishFries }) => {
+          {filteredGrouped.map(({ location, fishFries }) => {
             const coords = COORDS[location.id]
             if (!coords) return null
             const isFav = favorites.has(location.id)
