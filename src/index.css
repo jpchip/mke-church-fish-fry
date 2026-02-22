@@ -13,3 +13,27 @@ body {
 [data-bs-theme="dark"] .leaflet-popup-content-wrapper .text-muted {
   color: #adb5bd !important;
 }
+
+@media print {
+  nav.navbar { display: none !important; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  main { max-width: 100% !important; padding: 0 !important; }
+  .list-group-item { page-break-inside: avoid; }
+  body { color: #000 !important; background: #fff !important; }
+
+  /* Leaflet map in print */
+  .leaflet-container {
+    height: 350px !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .leaflet-tile,
+  .leaflet-tile-container img {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .leaflet-control-zoom,
+  .leaflet-control-attribution { display: none !important; }
+}
+.print-only { display: none; }
